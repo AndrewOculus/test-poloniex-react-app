@@ -37,8 +37,6 @@ export default class TradeScreen extends React.Component {
   }
 
   make_sheduler(){
-    console.log('update')
-
     const API_URL = "https://poloniex.com/public?command=returnTicker"
 
     fetch(API_URL).then(res => res.json()).then(json => {
@@ -52,19 +50,14 @@ export default class TradeScreen extends React.Component {
     })
   }
 
-  componentDidMount() {
-    
-  }
-
   componentWillUnmount() {
-    console.log('will unmount')
+
     didBlurSubscription.remove();
     willBlurSubscription.remove();
     clearInterval(this.interval);
+    
   }
 
-
-  
   render(){
 
     const polonexData = this.state.polonexData;

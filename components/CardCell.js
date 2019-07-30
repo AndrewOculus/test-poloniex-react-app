@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Animated } from 'react-native';
 import { Text, Card, CardItem, Body } from 'native-base';
 
 export default class CardCell extends React.Component {
@@ -13,6 +13,10 @@ export default class CardCell extends React.Component {
         }
     }
 
+    componentWillMount(){
+        this.animColor = new Animated.Value(150);
+    }
+
     componentDidUpdate(){
         if( this.state.percentChange != this.props.percentChange ||
             this.state.highestBid != this.props.highestBid ||
@@ -24,11 +28,25 @@ export default class CardCell extends React.Component {
                     last: this.props.last,
                 })
 
-                console.log(this.props.name)
+                this.animColor.setValue(0)
+
+                Animated.timing(this.animColor,{
+                    toValue: 150,
+                    duration: 2000
+                }).start();
             }
     }
 
     render(){
+
+        const interpolateColor = this.animColor.interpolate({
+             inputRange: [0, 150],
+             outputRange: ['rgb(255,0,0)', 'rgb(255,255,255)']
+        })
+
+        const animatedStyle = {
+            backgroundColor: interpolateColor
+        }
 
         let name = this.props.name
         let percentChange = this.props.percentChange
@@ -37,22 +55,20 @@ export default class CardCell extends React.Component {
 
         return(
             <Card>
-                <CardItem>
-                    <Body>
-                        <Text style={styles.name}>
-                            Name: {name}
-                        </Text>
-                        <Text style={styles.params}>
-                            Percent Change: {percentChange}
-                        </Text>
-                        <Text style={styles.params}>
-                            Highest Bid: {highestBid}
-                        </Text>
-                        <Text style={styles.params}>
-                            Last: {last}
-                        </Text>
-                    </Body>
-                </CardItem>
+                <Animated.View style={[animatedStyle, styles.cell]}>
+                            <Text style={styles.name}>
+                                Name: {name}
+                            </Text>
+                            <Text style={styles.params}>
+                                Percent Change: {percentChange}
+                            </Text>
+                            <Text style={styles.params}>
+                                Highest Bid: {highestBid}
+                            </Text>
+                            <Text style={styles.params}>
+                                Last: {last}
+                            </Text>
+                </Animated.View>
             </Card>
         );
     }
@@ -66,4 +82,7 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: 'rgba(0,0,0,0.4)'
     },
+    cell:{
+        padding: 20
+    }
 });
